@@ -98,6 +98,8 @@ build/
 *.iml
 *.ipr
 *.iws
+# Google Cloud Service Account
+key/serviceAccountKey.json
 
 # Custom Ignore Patterns (Add your own below)
 # Example: Ignore a custom folder
