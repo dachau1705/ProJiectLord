@@ -36,9 +36,10 @@ const addNewProduct = (req, res, next) => {
         name: infos.name,
         desc: infos.desc,
         price: infos.price,
-        image: infos.image
     })
-
+    if (req.file) {
+        product.image = req.file.firebaseUrl
+    }
     product.save()
         .then(response => {
             res.json({
@@ -58,7 +59,10 @@ const updateProduct = (req, res, next) => {
         name: infos.name,
         desc: infos.desc,
         price: infos.price,
-        image: infos.image
+    }
+
+    if (req.file) {
+        updateData.image = req.file.firebaseUrl
     }
     Product.findByIdAndUpdate(infos.productID, { $set: updateData })
         .then(response => {

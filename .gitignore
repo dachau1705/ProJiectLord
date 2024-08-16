@@ -1,0 +1,104 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs
+*.log
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDEs and editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.class
+*.log
+*.ctxt
+
+# Environment variables
+.env
+
+# Backup files
+*.bak
+*.swp
+*.tmp
+~$*
+
+# Package files
+*.tgz
+*.zip
+*.tar.gz
+
+# Compiled files
+*.out
+*.o
+*.a
+*.dll
+*.lib
+*.so
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.ico
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.bz2
+
+# SQL
+*.sql
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Miscellaneous
+*.lock
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.iml
+*.ipr
+*.iws
+
+# Custom Ignore Patterns (Add your own below)
+# Example: Ignore a custom folder
+# /your-folder-name/
