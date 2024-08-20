@@ -4,7 +4,6 @@ const Product = require("../models/Products")
 const getAllProduct = (req, res, next) => {
     Product.find()
         .then(response => {
-            console.log(response);
             res.json({
                 data: response,
                 status: true
@@ -20,11 +19,9 @@ const getAllProduct = (req, res, next) => {
 
 const getDetailProduct = (req, res, next) => {
     const _id = req.body._id
-    console.log(req);
 
     Product.findById(_id)
         .then(response => {
-            console.log(response);
             res.json({
                 data: response,
                 status: true,
