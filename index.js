@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 const bodyParser = require('body-parser');
 const router = require('./routers');
+const cors = require('cors');
 
 mongoose.connect('mongodb://localhost:27017/testdb')
     .then(() => console.log('Connected to MongoDB'))
@@ -20,9 +21,13 @@ db.once('open', () => {
 })
 
 const app = express()
+app.use(cors());
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
+app.get("/", (req, res) => {
+    res.json("Đố em biết anh đang nghĩ gì!");
+});
 router(app)
 const PORT = process.env.PORT || 4000
 

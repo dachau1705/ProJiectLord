@@ -4,23 +4,31 @@ const Product = require("../models/Products")
 const getAllProduct = (req, res, next) => {
     Product.find()
         .then(response => {
+            console.log(response);
             res.json({
-                response
+                data: response,
+                status: true
             })
         })
         .catch(error => {
             res.json({
-                message: "An error Occured!"
+                message: "An error Occured!",
+                status: false
             })
         })
 }
 
 const getDetailProduct = (req, res, next) => {
-    const productID = req.body.productID
-    Product.findById(productID)
+    const _id = req.body._id
+    console.log(req);
+
+    Product.findById(_id)
         .then(response => {
+            console.log(response);
             res.json({
-                response
+                data: response,
+                status: true,
+                message: 'Successfully!'
             })
         })
         .catch(error => {
@@ -79,14 +87,16 @@ const updateProduct = (req, res, next) => {
 
 const deleteProduct = (req, res, next) => {
     const infos = req.body
-    Product.findByIdAndDelete(infos.productID)
+    Product.findByIdAndDelete(infos._id)
         .then(response => {
             res.json({
+                status: true,
                 message: "Deleted Successfully!"
             })
         })
         .catch(error => {
             res.json({
+                status: false,
                 message: "An error Occured!"
             })
         })
