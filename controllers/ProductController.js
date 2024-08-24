@@ -38,9 +38,7 @@ const getDetailProduct = (req, res, next) => {
 const addNewProduct = (req, res, next) => {
     const infos = req.body
     let product = new Product({
-        name: infos.name,
-        desc: infos.desc,
-        price: infos.price,
+        ...infos
     })
     if (req.file) {
         product.image = req.file.firebaseUrl
@@ -48,12 +46,16 @@ const addNewProduct = (req, res, next) => {
     product.save()
         .then(response => {
             res.json({
-                message: "Add Successfully!"
+                message: "Add Successfully!",
+                status: true,
+                data: response
             })
         })
         .catch(error => {
+            console.log(error);
             res.json({
-                message: "An error Occured!"
+                message: "An error Occured!",
+                status: false
             })
         })
 }
@@ -61,23 +63,24 @@ const addNewProduct = (req, res, next) => {
 const updateProduct = (req, res, next) => {
     const infos = req.body
     let updateData = {
-        name: infos.name,
-        desc: infos.desc,
-        price: infos.price,
+        ...infos
     }
 
     if (req.file) {
         updateData.image = req.file.firebaseUrl
     }
-    Product.findByIdAndUpdate(infos.productID, { $set: updateData })
+    Product.findByIdAndUpdate(infos._id, { $set: updateData })
         .then(response => {
             res.json({
-                message: "Updated Successfully!"
+                message: "Updated Successfully!",
+                status: true
             })
         })
         .catch(error => {
+            console.log(error);
             res.json({
-                message: "An error Occured!"
+                message: "An error Occured!",
+                status: false
             })
         })
 }
