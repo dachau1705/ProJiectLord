@@ -3,6 +3,7 @@ const Product = require("../models/Products")
 
 const getAllProduct = (req, res, next) => {
     Product.find()
+        .sort({ createdAt: -1 })
         .then(response => {
             res.json({
                 data: response,
@@ -40,6 +41,7 @@ const addNewProduct = (req, res, next) => {
     let product = new Product({
         ...infos
     })
+
     if (req.file) {
         product.image = req.file.firebaseUrl
     }

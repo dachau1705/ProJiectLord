@@ -35,10 +35,24 @@ const createUser = async (req, res) => {
 // Lấy danh sách tất cả người dùng
 const getUsers = async (req, res) => {
     try {
-        const users = await User.find();
-        res.status(200).json(users);
+        User.find()
+            .sort({ createdAt: -1 })
+            .populate('userInfo')
+            .exec()
+            .then(response => {
+                res.json({
+                    data: response,
+                    status: true
+                })
+            })
+            .catch(error => {
+                res.json({
+                    message: "An error Occured!",
+                    status: false
+                })
+            })
     } catch (error) {
-        res.status(500).json({ message: 'Error fetching users', error });
+        res.status(500).json({ message: 'Error fetching users', error, status: false });
     }
 };
 
@@ -114,9 +128,33 @@ const login = (req, res, next) => {
             }
         })
 }
+const getDetailUser = (req, res, next) => {
+    try {
+        const userId = req.body._id
+        User.findById(userId)
+            .populate('userInfo')
+            .exec()
+            .then(response => {
+                res.json({
+                    data: response,
+                    status: true
+                })
+            })
+            .catch(error => {
+                res.json({
+                    message: "An error Occured!",
+                    status: false
+                })
+            })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error fetching users', error, status: false });
+    }
+};
 module.exports = {
     createUser,
     getUsers,
     register,
-    login
+    login,
+    getDetailUser
 };
