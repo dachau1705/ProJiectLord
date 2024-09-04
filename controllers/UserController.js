@@ -79,6 +79,22 @@ const register = (req, res, next) => {
                         password: hashedPass
                     })
                     user.save().then(user => {
+                        const userInfo = new UserInfo({
+                            userId: user._id,
+                            firstName: 'Tên',
+                            lastName: 'Họ',
+                            phoneNumber: '1234567890',
+                            address: {
+                                street: 'Đường',
+                                city: 'Tỉnh/Thành Phố',
+                                state: 'Phường/Huyện/Thị Trấn',
+                                postalCode: 'Mã bưu chính',
+                                country: 'Quốc gia'
+                            }
+                        });
+                        userInfo.save().then(() => {
+                            console.log('User and UserInfo saved successfully.');
+                        })
                         res.json({
                             message: "Register Successfully!",
                             status: true
@@ -111,7 +127,8 @@ const login = (req, res, next) => {
                         res.json({
                             message: "Login Successfully!",
                             status: true,
-                            token: token
+                            token: token,
+                            user_id: user._id
                         })
                     } else {
                         res.json({
@@ -131,8 +148,12 @@ const login = (req, res, next) => {
 const getDetailUser = (req, res, next) => {
     try {
         const userId = req.body._id
+        let userInfo = {}
+        UserInfo.findOne({ userId: userId }).exec().then(response => {
+            console.log(response);
+        })
+        console.log(userInfo)
         User.findById(userId)
-            .populate('userInfo')
             .exec()
             .then(response => {
                 res.json({

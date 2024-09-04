@@ -22,12 +22,24 @@ const getUserInfoByUserId = async (userId) => {
     }
 };
 
-const getAllUserInfos = async () => {
+const getAllUserInfos = async (req, res) => {
     try {
-        const userInfos = await UserInfo.find().populate('userId');
-        return userInfos;
+        UserInfo.find()
+            .exec()
+            .then(response => {
+                res.json({
+                    data: response,
+                    status: true
+                })
+            })
+            .catch(error => {
+                res.json({
+                    message: "An error Occured!",
+                    status: false
+                })
+            })
     } catch (error) {
-        throw new Error(`Error retrieving all user infos: ${error.message}`);
+        res.status(500).json({ message: 'Error fetching users', error, status: false });
     }
 };
 
@@ -58,4 +70,9 @@ const deleteUserInfo = async (userId) => {
         throw new Error(`Error deleting user info: ${error.message}`);
     }
 };
+
+module.exports = {
+    getAllUserInfos,
+}
+
 
