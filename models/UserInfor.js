@@ -3,28 +3,24 @@ const Schema = mongoose.Schema;
 
 const userInfoSchema = new Schema({
     userId: {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        unique: true,
-        required: true
+        type: String,
     },
     firstName: {
         type: String,
-        trim: true
     },
     lastName: {
         type: String,
-        trim: true
     },
     phoneNumber: {
         type: String,
-        unique: true,
-        trim: true
     },
     dob: {
         type: Date,
     },
     avatar: {
+        type: String,
+    },
+    desc: {
         type: String,
     },
     address: {

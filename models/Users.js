@@ -24,9 +24,12 @@ const userSchema = new Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
-    userInfo: {
-        type: Schema.Types.ObjectId,
-        ref: 'UserInfo'
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+    emailVerificationToken: {
+        type: String
     }
 }, { timestamps: true });
 
