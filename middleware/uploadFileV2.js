@@ -6,7 +6,7 @@ const { v4: uuidv4 } = require('uuid');
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
-        fileSize: 5 * 1024 * 1024, // Giới hạn kích thước tệp là 5MB
+        fileSize: 10 * 1024 * 1024, // Giới hạn kích thước tệp là 5MB
     },
 });
 
@@ -31,7 +31,7 @@ const uploadFileToFirebase = async (req, res, next) => {
 
         blobStream.on('error', (err) => {
             console.error('Tải lên Firebase Storage thất bại:', err);
-            return res.status(500).json({ message: 'Tải lên thất bại.' });
+            return res.status(500).json({ message: 'Tải lên thất bại.', status: false });
         });
 
         blobStream.on('finish', async () => {
@@ -41,7 +41,7 @@ const uploadFileToFirebase = async (req, res, next) => {
                 next(); // Chuyển sang middleware hoặc route handler tiếp theo
             } catch (error) {
                 console.error('Lỗi khi lấy URL của tệp:', error);
-                res.status(500).json({ message: 'Không thể lấy URL của tệp.' });
+                res.status(500).json({ message: 'Không thể lấy URL của tệp.', status: false });
             }
         });
 

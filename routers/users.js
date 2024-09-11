@@ -1,5 +1,5 @@
 const express = require('express')
-const { getUsers, createUser, register, login, getDetailUser, verifyEmail, updateUser, forgotPassword } = require('../controllers/UserController')
+const { getUsers, createUser, register, login, getDetailUser, verifyEmail, updateUser, forgotPassword, sendMail } = require('../controllers/UserController')
 const { getAllUserInfos } = require('../controllers/UserInforController')
 const router = express.Router()
 const { upload, uploadFileToFirebase } = require('../middleware/uploadFileV2')
@@ -13,5 +13,6 @@ router.get('/getAllUserInfos', getAllUserInfos)
 router.post('/verify-email', verifyEmail)
 router.post('/updateUser', upload.single('image'), uploadFileToFirebase, updateUser)
 router.post('/forgot_password', forgotPassword)
+router.post('/sendMail', sendMail)
 
 module.exports = router

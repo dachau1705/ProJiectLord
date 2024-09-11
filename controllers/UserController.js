@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken')
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const mongoose = require('mongoose');
+const SendEmailLog = require("../models/SendEmailLog");
+const { response } = require("express");
 
 // Tạo một user mới
 const createUser = async (req, res, next) => {
@@ -316,7 +318,6 @@ const updateUser = async (req, res, next) => {
         }
         return acc;
     }, {});
-    console.log(updateData);
 
     try {
         const [userInfoUpdate, userUpdate] = await Promise.all([
@@ -381,6 +382,92 @@ const forgotPassword = async (req, res, next) => {
     }
 }
 
+const sendMail = async (req, res, next) => {
+    try {
+        const { _id, type } = req.body;
+        const user = await User.findOne({ _id });
+
+        if (!user) {
+            return res
+                .status(200)
+                .json({ message: 'User not found!', status: false });
+        } else {
+            if (user.isVerified === true) {
+                return res
+                    .status(200)
+                    .json({ message: 'Email has been verified!', status: false });
+            } else {
+                if (type === 3) {
+                    // Generate token
+                    const token = crypto.randomBytes(32).toString('hex');
+                    User.findByIdAndUpdate(_id, { $set: { emailVerificationToken: token } }, { new: true }).then(response => {
+                        // Configure transporter for nodemailer
+                        const transporter = nodemailer.createTransport({
+                            service: 'Gmail',
+                            auth: {
+                                user: 'hausubasa1705@gmail.com',
+                                pass: 'uuin bpxk sjgj zhxd',
+                            },
+                        });
+
+                        // Mail options
+                        const mailOptions = {
+                            to: user.email,
+                            from: 'hausubasa1705@gmail.com',
+                            subject: 'Email Verification',
+                            text: `Please verify your email by clicking the link: \n${req.headers.origin}/users/verify-email?token=${token}`,
+                        };
+
+                        // Send email
+                        transporter.sendMail(mailOptions, async (err, info) => {
+                            if (err) {
+                                // Log failed email
+                                await SendEmailLog.create({
+                                    to: user.email,
+                                    subject: mailOptions.subject,
+                                    body: mailOptions.text,
+                                    status: 'failed',
+                                    errorMessage: err.message,
+                                    createdAt: new Date(),
+                                });
+
+                                return res
+                                    .status(500)
+                                    .json({ message: 'Error sending email', err, status: false });
+                            } else {
+                                // Log successful email
+                                await SendEmailLog.create({
+                                    to: user.email,
+                                    subject: mailOptions.subject,
+                                    body: mailOptions.text,
+                                    status: 'sent',
+                                    sentAt: new Date(),
+                                    createdAt: new Date(),
+                                });
+
+                                return res.json({
+                                    message: 'Send Verification Email Successfully!',
+                                    status: true,
+                                });
+                            }
+                        });
+                    }).catch(error => {
+                        res.json({
+                            status: false,
+                            message: "An error Occured!"
+                        })
+                    })
+                }
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res
+            .status(500)
+            .json({ message: 'Error processing request', error, status: false });
+    }
+};
+
 module.exports = {
     createUser,
     getUsers,
@@ -389,5 +476,6 @@ module.exports = {
     getDetailUser,
     verifyEmail,
     updateUser,
-    forgotPassword
+    forgotPassword,
+    sendMail
 };
