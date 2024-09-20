@@ -18,6 +18,9 @@ const sendEmailLogSchema = new mongoose.Schema({
         enum: ['pending', 'sent', 'failed'],
         default: 'pending',
     },
+    type: {
+        type: String
+    },
     errorMessage: {
         type: String,
         default: null,

@@ -2,35 +2,57 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     customerId: {
-        type: String,
-        required: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'Customer ID is required'],
     },
     date: {
         type: Date,
         default: Date.now,
-        required: true,
+        required: [true, 'Date is required'],
     },
     address: {
         type: String,
-        required: true,
+        required: [true, 'Address is required'],
     },
     paymentMethod: {
         type: String,
-        required: true,
-        enum: ['Credit Card', 'PayPal', 'Cash on Delivery', 'Bank Transfer'], // Example options
+        required: [true, 'Payment method is required'],
+        enum: {
+            values: ['Credit Card', 'PayPal', 'Cash on Delivery', 'Bank Transfer'],
+            message: 'Payment method must be one of Credit Card, PayPal, Cash on Delivery, or Bank Transfer',
+        },
+    },
+    street: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    company: {
+        type: String,
+    },
+    country: {
+        type: String,
     },
     status: {
         type: String,
-        required: true,
-        enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Canceled'], // Example statuses
+        required: [true, 'Order status is required'],
+        enum: {
+            values: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Canceled'],
+            message: 'Order status must be one of Pending, Confirmed, Shipped, Delivered, or Canceled',
+        },
     },
     totalPrice: {
         type: Number,
-        required: true,
+        required: [true, 'Total price is required'],
     },
     phone: {
         type: String,
-        required: true,
+        required: [true, 'Phone number is required'],
     },
     vat: {
         type: Number,
@@ -42,7 +64,7 @@ const orderSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Email is required'],
         match: [/\S+@\S+\.\S+/, 'Please enter a valid email'],
     },
 }, { timestamps: true });

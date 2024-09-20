@@ -42,7 +42,6 @@ const getWardsByDistrict = async (req, res) => {
     try {
         const districts = await axios.get(`${BASE_URL}d?depth=2`);
         const district = districts.data.find(d => d.name === name)
-        console.log(district);
         const response = await axios.get(`${BASE_URL}d/${district.code}?depth=2`);
         const wards = response.data.wards
         let data = []

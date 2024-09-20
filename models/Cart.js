@@ -8,7 +8,8 @@ const cartSchema = new mongoose.Schema({
     items: [
         {
             productId: {
-                type: String,
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
                 required: true,
             },
             quantity: {
@@ -42,10 +43,20 @@ const cartSchema = new mongoose.Schema({
 
 cartSchema.pre('save', function (next) {
     // Calculate total_items and total_price before saving
-    this.total_items = this.items.reduce((total, item) => total + item.quantity, 0);
-    this.total_price = this.items.reduce((total, item) => total + item.total_price, 0);
-    this.updated_at = Date.now(); // Update the timestamp
+    this.totalItems = this.items.reduce((total, item) => total + item.quantity, 0);
+    this.totalPrice = this.items.reduce((total, item) => total + item.total_price, 0);
+    this.updatedAt = Date.now(); // Update the timestamp
+    next();
+});
+cartSchema.pre('findOneAndUpdate', function (next) {
+    const update = this.getUpdate();
+    if (update.items) {
+        update.totalItems = update.items.reduce((total, item) => total + item.quantity, 0);
+        update.totalPrice = update.items.reduce((total, item) => total + item.total_price, 0);
+    }
+    update.updatedAt = Date.now();
     next();
 });
 
-module.exports = mongoose.model('Cart', cartSchema);
+const Cart = mongoose.model('Cart', cartSchema);
+module.exports = Cart

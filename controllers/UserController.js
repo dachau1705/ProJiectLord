@@ -178,8 +178,8 @@ const register = (req, res, next) => {
                                     });
                                     userInfo.save().then(() => {
                                         console.log('User and UserInfo saved successfully.');
+                                        res.json({ message: 'Register Successfully! Verification email sent!', status: true });
                                     })
-                                    res.json({ message: 'Register Successfully! Verification email sent!', status: true });
                                 }
                             });
                         }).catch(error => {
@@ -361,10 +361,53 @@ const forgotPassword = async (req, res, next) => {
                     User.findByIdAndUpdate(account._id, {
                         password: hashedPass,
                     }).then(() => {
-                        res.json({
-                            message: "Change password successfully!",
-                            status: true
-                        })
+                        const transporter = nodemailer.createTransport({
+                            service: 'Gmail',
+                            auth: {
+                                user: 'hausubasa1705@gmail.com',
+                                pass: 'uuin bpxk sjgj zhxd',
+                            },
+                        });
+
+                        // Mail options
+                        const mailOptions = {
+                            to: account.email,
+                            from: 'hausubasa1705@gmail.com',
+                            subject: 'Email Verification',
+                            text: `Your new password is 123456`,
+                        };
+                        transporter.sendMail(mailOptions, async (err, info) => {
+                            if (err) {
+                                // Log failed email
+                                await SendEmailLog.create({
+                                    to: account.email,
+                                    subject: mailOptions.subject,
+                                    body: mailOptions.text,
+                                    status: 'failed',
+                                    errorMessage: err.message,
+                                    createdAt: new Date(),
+                                });
+
+                                return res
+                                    .status(500)
+                                    .json({ message: 'Error sending email', err, status: false });
+                            } else {
+                                // Log successful email
+                                await SendEmailLog.create({
+                                    to: account.email,
+                                    subject: mailOptions.subject,
+                                    body: mailOptions.text,
+                                    status: 'sent',
+                                    sentAt: new Date(),
+                                    createdAt: new Date(),
+                                });
+
+                                res.json({
+                                    message: "Change password successfully!",
+                                    status: true
+                                })
+                            }
+                        });
                     })
                 }
             })
@@ -427,6 +470,7 @@ const sendMail = async (req, res, next) => {
                                     subject: mailOptions.subject,
                                     body: mailOptions.text,
                                     status: 'failed',
+                                    type: 'Send Verification Mail',
                                     errorMessage: err.message,
                                     createdAt: new Date(),
                                 });
@@ -441,6 +485,7 @@ const sendMail = async (req, res, next) => {
                                     subject: mailOptions.subject,
                                     body: mailOptions.text,
                                     status: 'sent',
+                                    type: 'Send Verification Mail',
                                     sentAt: new Date(),
                                     createdAt: new Date(),
                                 });
@@ -468,6 +513,35 @@ const sendMail = async (req, res, next) => {
     }
 };
 
+const getListMailLogByUser = async (req, res, next) => {
+    const { userId } = req.body
+    const user = await User.findOne({ _id: userId })
+
+    try {
+        if (user) {
+            SendEmailLog.find({ to: user.email })
+                .then(response => {
+                    res.json({
+                        status: true,
+                        data: response,
+                        message: "Oke!"
+                    })
+                })
+        } else {
+            res.json({
+                status: false,
+                message: "User not found!"
+            })
+        }
+    } catch (error) {
+        res.json({
+            status: false,
+            message: "An error Occured!",
+            error: error
+        })
+    }
+}
+
 module.exports = {
     createUser,
     getUsers,
@@ -477,5 +551,6 @@ module.exports = {
     verifyEmail,
     updateUser,
     forgotPassword,
-    sendMail
+    sendMail,
+    getListMailLogByUser
 };

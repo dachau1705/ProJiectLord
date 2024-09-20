@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const orderItemSchema = new mongoose.Schema({
     productId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
         required: true,
     },
     amount: {
@@ -17,17 +18,19 @@ const orderItemSchema = new mongoose.Schema({
     totalPrice: {
         type: Number,
         required: true,
-        validate: {
-            validator: function () {
-                return this.total_price === this.price * this.amount;
-            },
-            message: 'Total price must be equal to price multiplied by amount',
-        },
+        default: 0,
     },
     orderId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order',
         required: true,
     },
+});
+orderItemSchema.pre('save', function (next) {
+    // Calculate total_items and total_price before saving
+    this.totalPrice = this.price * this.amount;
+    this.updatedAt = Date.now(); // Update the timestamp
+    next();
 });
 
 module.exports = mongoose.model('OrderItem', orderItemSchema);

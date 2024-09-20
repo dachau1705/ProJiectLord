@@ -104,6 +104,11 @@ const deleteProduct = (req, res, next) => {
         })
 }
 
+
 module.exports = {
-    getAllProduct, getDetailProduct, addNewProduct, updateProduct, deleteProduct
+    getAllProduct,
+    getDetailProduct,
+    addNewProduct,
+    updateProduct,
+    deleteProduct,
 }
