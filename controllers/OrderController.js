@@ -112,6 +112,7 @@ const placeOrder = async (req, res, next) => {
 
 const getListOrderByUser = async (req, res, next) => {
     const { userId } = req.body
+
     Orders.find({ customerId: userId })
         .then(response => {
             res.json({

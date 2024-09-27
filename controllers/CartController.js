@@ -9,7 +9,12 @@ const getCartList = (req, res, next) => {
             model: 'Product', // Ensure this matches your Product model name
         })
         .then(response => {
-            const cartList = response.items
+            const cartList = response.items.map(item => ({
+                ...item.toObject(), // Chuyển đổi item sang đối tượng để dễ thao tác
+                image: item.productId.image, // Giả sử trường bạn muốn lấy là price
+                name: item.productId.name, // Giả sử trường bạn muốn lấy là price
+            }));
+
             res.json({
                 status: true,
                 message: "Get Cart List Successfully!",
