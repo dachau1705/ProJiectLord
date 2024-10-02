@@ -14,16 +14,27 @@ module.exports = function (server) {
         console.log('Có khách hàng mới kết nối:', socket.id);
 
         // Lắng nghe sự kiện 'join_room' từ client
-        socket.on('join_room', async ({ user1_id, user2_id, room_id }) => {
-            const roomId = room_id ? room_id : [user1_id, user2_id].sort().join('_');
-            socket.join(roomId);
-            console.log(`Người dùng ${socket.id} đã tham gia phòng: ${roomId}`);
+        socket.on('join_room', async ({ room_id }) => {
+            socket.join(room_id);
+            console.log(`Người dùng ${socket.id} đã tham gia phòng: ${room_id}`);
         });
 
         // Lắng nghe sự kiện 'message' từ client
         socket.on('message', async ({ roomId, data }) => {
             try {
-                const newMessage = new Message(data);
+                const receiver = data.receiver_id
+                let receiver_id = []
+                for (const rc of receiver) {
+                    receiver_id.push(rc.userId)
+                }
+                const newMessage = new Message({
+                    sender_id: data.sender_id,
+                    receiver_id: JSON.stringify(receiver_id),
+                    text: data.text,
+                    room_id: roomId,
+                    timestamp: data.timestamp,
+                    is_read: data.is_read
+                });
                 await newMessage.save();
                 // Gửi tin nhắn cho tất cả người dùng trong phòng
                 io.to(roomId).emit('message', data);

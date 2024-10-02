@@ -45,9 +45,9 @@ const getListGroupChatByUserId = async (req, res, next) => {
     const info = req.info
     const userId = info.userId
     GroupChat.find({ 'members.userId': new mongoose.Types.ObjectId(userId) })
-        .then(groups => {
+        .then(response => {
             res.json({
-                data: groups,
+                data: response,
                 status: true
             });
         })
