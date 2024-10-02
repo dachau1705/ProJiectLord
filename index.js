@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const router = require('./routers');
 const cors = require('cors');
 const http = require('http');
+const infoMiddleware = require('./middleware/infoMiddleware ');
 
 // Kết nối đến MongoDB
 mongoose.connect('mongodb://localhost:27017/testdb')
@@ -27,7 +28,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+app.use(infoMiddleware);
 // Route cơ bản
 app.get("/", (req, res) => {
     res.json("Đố em biết anh đang nghĩ gì!");

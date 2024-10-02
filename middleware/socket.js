@@ -1,5 +1,6 @@
 const { Server } = require('socket.io');
 const Message = require('../models/Message');
+const { addGroupChatRp } = require('../repository/GroupChatRp');
 
 module.exports = function (server) {
     const io = new Server(server, {
@@ -13,8 +14,8 @@ module.exports = function (server) {
         console.log('Có khách hàng mới kết nối:', socket.id);
 
         // Lắng nghe sự kiện 'join_room' từ client
-        socket.on('join_room', ({ user1_id, user2_id }) => {
-            const roomId = [user1_id, user2_id].sort().join('_');
+        socket.on('join_room', async ({ user1_id, user2_id, room_id }) => {
+            const roomId = room_id ? room_id : [user1_id, user2_id].sort().join('_');
             socket.join(roomId);
             console.log(`Người dùng ${socket.id} đã tham gia phòng: ${roomId}`);
         });

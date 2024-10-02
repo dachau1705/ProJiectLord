@@ -256,7 +256,7 @@ const login = (req, res, next) => {
 
 const getDetailUser = async (req, res, next) => {
     try {
-        const userId = req.body._id;
+        const userId = req.body._id;        
         // Perform both queries concurrently
         const [userInfo, user] = await Promise.all([
             UserInfo.findOne({ userId: userId }).exec(),
